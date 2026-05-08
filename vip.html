@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLYMPUSX | Proxy VIP</title>
+    <style>
+        :root { --vip-gold: #ffd700; --main-red: #ff0000; --bg: #050505; }
+        body { background: var(--bg); color: #fff; font-family: 'Consolas', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .vip-panel { 
+            width: 90%; max-width: 450px; background: rgba(15, 15, 15, 0.95); 
+            border: 1px solid var(--vip-gold); padding: 40px; border-radius: 5px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1); text-align: center;
+        }
+        .header { color: var(--vip-gold); font-size: 1.8em; font-weight: bold; margin-bottom: 10px; letter-spacing: 5px; }
+        .input-key { 
+            width: 100%; padding: 15px; background: #000; border: 1px solid #333; 
+            color: var(--vip-gold); text-align: center; font-size: 1.2em; margin: 20px 0;
+            border-radius: 4px; outline: none; transition: 0.3s;
+        }
+        .input-key:focus { border-color: var(--vip-gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+        .btn-activate { 
+            width: 100%; padding: 15px; background: var(--vip-gold); color: #000; 
+            border: none; font-weight: bold; cursor: pointer; text-transform: uppercase;
+        }
+        .features-list { text-align: left; font-size: 0.75em; color: #666; margin-top: 25px; border-top: 1px solid #222; padding-top: 20px; }
+        .active-31 { color: var(--vip-gold); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="vip-panel">
+    <div class="header">ELITE ACCESS</div>
+    <p style="font-size: 0.8em; color: #888;">กรุณากรอกคีย์ เพื่ปลดล็อค VIP</p>
+    
+    <input type="text" id="v_key" class="input-key" placeholder="OPX-XXXX-XXXX">
+    <button class="btn-activate" onclick="validateKey()">Activate System</button>
+
+    <div class="features-list">
+        <div><span class="active-31">●</span> OlympusX Server Proxy</div>
+        <div><span class="active-31">●</span> Proxy ที่ดี เซิฟเวอร์ไม่หน่วง</div>
+        <div><span class="active-31">●</span> ANTI-BAN กันแบน 100%</div>
+    </div>
+</div>
+
+<script>
+    const fbURL = "https://olympusx-xmodz-default-rtdb.asia-southeast1.firebasedatabase.app/";
+
+    async function validateKey() {
+        const key = document.getElementById('v_key').value;
+        if(!key) return alert("กรุณากรอกคีย์!");
+
+        try {
+            // ไปเช็คในถังข้อมูล "keys" ว่ามีรหัสนี้มั้ย
+            const res = await fetch(`${fbURL}keys/${key}.json`);
+            const data = await res.json();
+
+            if(data && data.status === "active") {
+                const now = Date.now();
+                if(now > data.expire) {
+                    alert("❌ คีย์นี้หมดอายุแล้ว!");
+                } else {
+                    alert("✅ ยินดีต้อนรับสู่ระดับ VIL! กำลังเข้าสู่ระบบ...");
+                    // พาส่งข้อมูลเข้าเครื่องหรือพาไปหน้า Dashboard VIP
+                    localStorage.setItem('vip_status', 'true');
+                    window.location.href = "dashboard_vip.html"; // หน้า 31 ฟีเจอร์
+                }
+            } else {
+                alert("❌ คีย์ไม่ถูกต้อง!");
+            }
+        } catch(e) { alert("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้!"); }
+    }
+</script>
+
+</body>
+</html>
