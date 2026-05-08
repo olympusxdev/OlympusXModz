@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLYMPUSX | VERIFY</title>
+    <style>
+        :root { --red: #ff0000; --black: #050505; --green: #39ff14; }
+        body { background: var(--black); color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; }
+        .v-container { max-width: 450px; margin: auto; border: 2px solid var(--red); border-radius: 15px; padding: 20px; box-shadow: 0 0 20px var(--red); }
+        h1 { color: var(--red); text-shadow: 2px 2px #000; letter-spacing: 2px; }
+        .step-box { background: #1a1a1a; padding: 15px; border-radius: 10px; margin: 15px 0; border: 1px solid #333; }
+        input { width: 90%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid var(--red); color: var(--green); text-align: center; font-size: 1.1em; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1em; }
+        .btn-ad { background: var(--red); color: white; margin-bottom: 10px; }
+        .btn-verify { background: var(--green); color: black; display: none; }
+        .progress-bar { height: 10px; background: #333; border-radius: 5px; margin: 10px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--red); width: 0%; transition: 0.5s; }
+    </style>
+</head>
+<body>
+
+<div class="v-container">
+    <h1>OLYMPUSX♕.EXE</h1>
+    <p style="font-size: 0.8em; color: #888;">กรุณาผ่าน 5 ด่านเพื่อปลดล็อกระบบ Admin</p>
+    
+    <div class="step-box">
+        <div id="status-text">ความคืบหน้า: 0/5</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="p-fill"></div>
+        </div>
+    </div>
+
+    <input type="text" id="user_uid" placeholder="ใส่ UID 10 หลัก ของมึง">
+    
+    <button class="btn btn-ad" id="btn-next" onclick="handleAdClick()">⏩ กดไปด่านต่อไป (เด้งโฆษณา)</button>
+    <button class="btn btn-verify" id="btn-finish" onclick="saveToFirebase()">✅ ยืนยันข้อมูลเข้าเซิร์ฟเวอร์</button>
+
+    <div id="msg" style="margin-top:15px; font-size: 0.9em;"></div>
+</div>
+
+<script>
+    let currentStep = 0;
+    const totalSteps = 5;
+    // ลิงก์ Firebase ของมึง
+    const fbURL = "https://olympusx-xmodz-default-rtdb.asia-southeast1.firebasedatabase.app/";
+    
+    // ลิงก์โฆษณา (เอาลิงก์ย่อหน้าของมึงมาใส่ตรงนี้)
+    const adLinks = [
+        "https://discord.gg/J443CYrMkK", 
+    ];
+
+    function handleAdClick() {
+        const uid = document.getElementById('user_uid').value;
+        if(uid.length < 5) {
+            alert("ใส่ UID SYSTEM!");
+            return;
+        }
+
+        // เปิดโฆษณาในแท็บใหม่
+        window.open(adLinks[currentStep], '_blank');
+
+        currentStep++;
+        updateUI();
+
+        if(currentStep >= totalSteps) {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-finish').style.display = 'block';
+        }
+    }
+
+    function updateUI() {
+        document.getElementById('status-text').innerText = `ความคืบหน้า: ${currentStep}/${totalSteps}`;
+        document.getElementById('p-fill').style.width = (currentStep / totalSteps * 100) + "%";
+    }
+
+    async function saveToFirebase() {
+        const uid = document.getElementById('user_uid').value;
+        const msgDiv = document.getElementById('msg');
+        msgDiv.innerHTML = "กำลังลงทะเบียนในฐานข้อมูล...";
+
+        const playerData = {
+            uid: uid,
+            status: "verified",
+            level: 1,
+            diamonds: 0,
+            gold: 0,
+            rank: "BRONZE",
+            vip: 0,
+            expire: Date.now() + (3 * 60 * 60 * 1000) // เล่นได้ 3 ชม.
+        };
+
+        try {
+            // บันทึกข้อมูลลง Firebase
+            await fetch(`${fbURL}players/${uid}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(playerData)
+            });
+            
+            msgDiv.style.color = "#39ff14";
+            msgDiv.innerHTML = "✅ ยืนยันสำเร็จ! เข้าเกมผ่านมอดได้เลย (3 ชม.)";
+            alert("ลงทะเบียน UID: " + uid + " เรียบร้อย!");
+        } catch (e) {
+            msgDiv.style.color = "red";
+            msgDiv.innerHTML = "❌ ผิดพลาด: เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว";
+        }
+    }
+</script>
+
+</body>
+</html>
