@@ -3,109 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLYMPUSX | VERIFY</title>
+    <title>OLYMPUSX | VERIFICATION</title>
     <style>
-        :root { --red: #ff0000; --black: #050505; --green: #39ff14; }
-        body { background: var(--black); color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; }
-        .v-container { max-width: 450px; margin: auto; border: 2px solid var(--red); border-radius: 15px; padding: 20px; box-shadow: 0 0 20px var(--red); }
-        h1 { color: var(--red); text-shadow: 2px 2px #000; letter-spacing: 2px; }
-        .step-box { background: #1a1a1a; padding: 15px; border-radius: 10px; margin: 15px 0; border: 1px solid #333; }
-        input { width: 90%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid var(--red); color: var(--green); text-align: center; font-size: 1.1em; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1em; }
-        .btn-ad { background: var(--red); color: white; margin-bottom: 10px; }
-        .btn-verify { background: var(--green); color: black; display: none; }
-        .progress-bar { height: 10px; background: #333; border-radius: 5px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--red); width: 0%; transition: 0.5s; }
+        :root { --main-red: #ff0000; --dark-bg: #050505; --neon-green: #39ff14; }
+        body { 
+            background: var(--dark-bg); color: #fff; font-family: 'Consolas', 'Courier New', monospace;
+            margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh;
+            background-image: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(20,0,0,1) 100%);
+        }
+        .verify-card {
+            width: 90%; max-width: 400px; padding: 40px; border: 1px solid var(--main-red);
+            border-radius: 10px; background: rgba(0,0,0,0.9); box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            position: relative; overflow: hidden;
+        }
+        .verify-card::before {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,0,0,0.05) 1px, rgba(255,0,0,0.05) 2px);
+            pointer-events: none;
+        }
+        h1 { color: var(--main-red); font-size: 2em; letter-spacing: 5px; margin-bottom: 10px; text-shadow: 0 0 10px var(--main-red); }
+        .status-text { font-size: 0.8em; color: #666; margin-bottom: 30px; text-transform: uppercase; }
+        
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { color: var(--main-red); font-size: 0.7em; letter-spacing: 2px; }
+        input { 
+            width: 100%; background: #000; border: 1px solid #333; color: var(--neon-green);
+            padding: 15px; margin-top: 5px; border-radius: 5px; font-size: 1.1em; outline: none;
+            box-sizing: border-box; transition: 0.3s;
+        }
+        input:focus { border-color: var(--main-red); box-shadow: 0 0 10px rgba(255,0,0,0.2); }
+
+        .progress-container { margin: 25px 0; }
+        .progress-text { font-size: 0.7em; display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .progress-bar { height: 6px; background: #111; border-radius: 10px; overflow: hidden; border: 1px solid #222; }
+        .progress-fill { height: 100%; background: var(--main-red); width: 0%; transition: 0.5s; box-shadow: 0 0 10px var(--main-red); }
+
+        .btn-action {
+            width: 100%; padding: 18px; background: var(--main-red); color: #fff; border: none;
+            font-weight: bold; cursor: pointer; border-radius: 5px; letter-spacing: 2px;
+            text-transform: uppercase; transition: 0.3s;
+        }
+        .btn-action:hover { background: #b30000; transform: scale(1.02); }
+        .btn-action:active { transform: scale(0.98); }
+
+        .footer-note { font-size: 0.6em; color: #444; margin-top: 20px; line-height: 1.5; }
     </style>
 </head>
 <body>
 
-<div class="v-container">
-    <h1>OLYMPUSX♕.EXE</h1>
-    <p style="font-size: 0.8em; color: #888;">กรุณาผ่าน 5 ด่านเพื่อปลดล็อกระบบ Admin</p>
-    
-    <div class="step-box">
-        <div id="status-text">ความคืบหน้า: 0/5</div>
+<div class="verify-card">
+    <h1>OLYMPUSX</h1>
+    <div class="status-text">VERIFY v4.0</div>
+
+    <div class="input-group">
+        <label>TARGET UID</label>
+        <input type="text" id="target_uid" placeholder="ENTER 10-DIGIT UID...">
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-text">
+            <span id="step-label">LINK Ads </span>
+            <span id="step-count">0/3</span>
+        </div>
         <div class="progress-bar">
-            <div class="progress-fill" id="p-fill"></div>
+            <div class="progress-fill" id="bar"></div>
         </div>
     </div>
 
-    <input type="text" id="user_uid" placeholder="ใส่ UID 10 หลัก ของมึง">
-    
-    <button class="btn btn-ad" id="btn-next" onclick="handleAdClick()">⏩ กดไปด่านต่อไป (เด้งโฆษณา)</button>
-    <button class="btn btn-verify" id="btn-finish" onclick="saveToFirebase()">✅ ยืนยันข้อมูลเข้าเซิร์ฟเวอร์</button>
+    <button class="btn-action" id="action-btn" onclick="processStep()">Execute Step 1</button>
 
-    <div id="msg" style="margin-top:15px; font-size: 0.9em;"></div>
+    <div class="footer-note">
+        WARNING: All activities are logged under OlympusX Private Infrastructure. 
+        Complete all 3 bypass steps to inject data into core server.
+    </div>
 </div>
 
 <script>
     let currentStep = 0;
-    const totalSteps = 5;
-    // ลิงก์ Firebase ของมึง
+    const totalSteps = 3;
     const fbURL = "https://olympusx-xmodz-default-rtdb.asia-southeast1.firebasedatabase.app/";
-    
-    // ลิงก์โฆษณา (เอาลิงก์ย่อหน้าของมึงมาใส่ตรงนี้)
     const adLinks = [
-        "https://discord.gg/J443CYrMkK", 
+        "https://discord.gg/astutetech",
+        "https://discord.gg/J443CYrMkK",
+        "https://discord.gg/3EGz8AqyeY",
     ];
 
-    function handleAdClick() {
-        const uid = document.getElementById('user_uid').value;
+    function processStep() {
+        const uid = document.getElementById('target_uid').value;
         if(uid.length < 5) {
-            alert("ใส่ UID SYSTEM!");
+            alert("❌ UID INVALID: กรุณาระบุ UID ให้ถูกต้องก่อนเริ่มกระบวนการ");
             return;
         }
 
-        // เปิดโฆษณาในแท็บใหม่
-        window.open(adLinks[currentStep], '_blank');
-
-        currentStep++;
-        updateUI();
-
-        if(currentStep >= totalSteps) {
-            document.getElementById('btn-next').style.display = 'none';
-            document.getElementById('btn-finish').style.display = 'block';
+        if(currentStep < totalSteps) {
+            window.open(adLinks[currentStep], '_blank');
+            currentStep++;
+            updateUI();
+        } else {
+            completeVerification(uid);
         }
     }
 
     function updateUI() {
-        document.getElementById('status-text').innerText = `ความคืบหน้า: ${currentStep}/${totalSteps}`;
-        document.getElementById('p-fill').style.width = (currentStep / totalSteps * 100) + "%";
+        const bar = document.getElementById('bar');
+        const count = document.getElementById('step-count');
+        const btn = document.getElementById('action-btn');
+        const label = document.getElementById('step-label');
+
+        const percent = (currentStep / totalSteps) * 100;
+        bar.style.width = percent + "%";
+        count.innerText = `${currentStep}/${totalSteps}`;
+        
+        if(currentStep < totalSteps) {
+            btn.innerText = `Execute Step ${currentStep + 1}`;
+            label.innerText = "BYPASSING ENCRYPTION...";
+        } else {
+            btn.innerText = "FINALIZING INJECTION";
+            btn.style.background = "#39ff14";
+            btn.style.color = "#000";
+            label.innerText = "VERIFICATION COMPLETE";
+        }
     }
 
-    async function saveToFirebase() {
-        const uid = document.getElementById('user_uid').value;
-        const msgDiv = document.getElementById('msg');
-        msgDiv.innerHTML = "กำลังลงทะเบียนในฐานข้อมูล...";
-
-        const playerData = {
-            uid: uid,
-            status: "verified",
-            level: 1,
-            diamonds: 0,
-            gold: 0,
-            rank: "BRONZE",
-            vip: 0,
-            expire: Date.now() + (3 * 60 * 60 * 1000) // เล่นได้ 3 ชม.
-        };
-
+    async function completeVerification(uid) {
+        document.getElementById('action-btn').innerText = "CONNECTING...";
         try {
-            // บันทึกข้อมูลลง Firebase
-            await fetch(`${fbURL}players/${uid}.json`, {
-                method: 'PUT',
-                body: JSON.stringify(playerData)
-            });
-            
-            msgDiv.style.color = "#39ff14";
-            msgDiv.innerHTML = "✅ ยืนยันสำเร็จ! เข้าเกมผ่านมอดได้เลย (3 ชม.)";
-            alert("ลงทะเบียน UID: " + uid + " เรียบร้อย!");
-        } catch (e) {
-            msgDiv.style.color = "red";
-            msgDiv.innerHTML = "❌ ผิดพลาด: เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว";
+            const data = {
+                uid: uid,
+                status: "active",
+                vip: 0,
+                diamonds: 0,
+                rank: "BRONZE",
+                verified_at: Date.now()
+            };
+            await fetch(`${fbURL}players/${uid}.json`, { method: 'PUT', body: JSON.stringify(data) });
+            alert("⚡ SYSTEM: บันทึกข้อมูล UID " + uid + " สำเร็จ! กรุณาไปที่หน้า Dashboard");
+            window.location.href = "dashboard.html";
+        } catch(e) {
+            alert("❌ ERROR: ไม่สามารถติดต่อฐานข้อมูลได้");
+            document.getElementById('action-btn').innerText = "RETRY INJECTION";
         }
     }
 </script>
 
 </body>
-</html>
+    </html>
