@@ -2,71 +2,83 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>OLYMPUSX | ADMIN DASHBOARD</title>
+    <title>OLYMPUSX | MASTER ADMIN CONTROL</title>
     <style>
-        body { background: #050505; color: #00ff00; font-family: sans-serif; padding: 20px; }
-        .panel { border: 1px solid #00ff00; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; background: #111; }
-        input, select { width: 90%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid #00ff00; color: #00ff00; }
-        .btn-save { width: 100%; padding: 15px; background: #00ff00; color: #000; font-weight: bold; border: none; cursor: pointer; }
-        .group { margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        :root { --red: #ff0000; --gold: #ffd700; --dark: #050505; }
+        body { background: var(--dark); color: #fff; font-family: 'Consolas', monospace; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; border: 2px solid var(--red); padding: 30px; box-shadow: 0 0 50px rgba(255, 0, 0, 0.2); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 10px; }
+        h2 { color: var(--red); border-bottom: 2px solid var(--red); padding-bottom: 10px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #444; color: #0f0; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-top: 10px; }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .log-box { background: #000; height: 150px; overflow-y: auto; padding: 10px; font-size: 0.8em; color: #0f0; border: 1px solid #222; margin-top: 20px; }
     </style>
 </head>
 <body>
-
-<div class="panel">
-    <h2>♕ OLYMPUSX ADMIN PANEL</h2>
-    <p>จัดการข้อมูลผู้เล่นแบบ Real-time</p>
+<div class="container">
+    <h1 style="text-align:center; color:var(--red);">♕ OLYMPUSX MASTER CONSOLE</h1>
     
-    <div class="group">
-        <label>ระบุ UID ผู้เล่นที่ต้องการปรับ:</label>
-        <input type="text" id="target_uid" placeholder="เช่น 15625460340">
+    <div class="grid">
+        <div class="card">
+            <h2>🔑 Key Factory</h2>
+            <p>สร้างคีย์ VIP (31 ฟีเจอร์)</p>
+            <button class="btn btn-gold" onclick="genKey(3)">+ สร้างคีย์ 3 ชม.</button>
+            <button class="btn btn-gold" onclick="genKey(24)">+ สร้างคีย์ 24 ชม.</button>
+            <div id="key-res" style="margin-top:15px; font-size:1.5em; text-align:center; color:var(--gold); font-weight:bold;"></div>
+        </div>
+
+        <div class="card">
+            <h2>💀 Player Injector</h2>
+            <input type="text" id="target_uid" placeholder="ระบุ UID เป้าหมาย">
+            <input type="number" id="set_diam" placeholder="ปรับเพชร">
+            <select id="set_rank">
+                <option value="GRANDMASTER">GRANDMASTER</option>
+                <option value="HEROIC">HEROIC</option>
+                <option value="MASTER">MASTER</option>
+            </select>
+            <button class="btn btn-red" onclick="injectData()">⚡ อัปเดตข้อมูล Real-time</button>
+        </div>
     </div>
 
-    <div class="group">
-        <h3>💎 ปรับแก้สถานะเงิน/เพชร</h3>
-        <input type="number" id="set_diam" placeholder="จำนวนเพชร (เช่น 999999)">
-        <input type="number" id="set_gold" placeholder="จำนวนทอง">
+    <div class="card" style="margin-top:20px;">
+        <h2>🌐 Global System Control</h2>
+        <div class="grid">
+            <input type="text" id="fake_friend_uid" placeholder="UID ที่จะให้ส่งคำขอเพื่อนปลอมไป">
+            <input type="text" id="server_news" placeholder="ประกาศข่าวสารในเซิร์ฟเวอร์...">
+        </div>
+        <button class="btn btn-red" style="background:#444;" onclick="updateServer()">📢 ส่งคำสั่ง Global</button>
     </div>
 
-    <div class="group">
-        <h3>🏆 ปรับแรงค์ & เลเวล</h3>
-        <select id="set_rank">
-            <option value="GRANDMASTER">GRANDMASTER</option>
-            <option value="HEROIC">HEROIC</option>
-            <option value="DIAMOND">DIAMOND</option>
-        </select>
-        <input type="number" id="set_level" placeholder="เลเวล (1-100)">
-    </div>
-
-    <button class="btn-save" onclick="updatePlayer()">⚡ อัปเดตข้อมูลเเดี๋ยวนี้</button>
+    <div class="log-box" id="logs">[SYSTEM]: Welcome, Master SUNHEAD.EXE...</div>
 </div>
 
 <script>
     const fbURL = "https://olympusx-xmodz-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
-    async function updatePlayer() {
-        const uid = document.getElementById('target_uid').value;
-        if(!uid) return alert("ใส่ UID ก่อน!");
-
-        const data = {
-            diamonds: document.getElementById('set_diam').value || 0,
-            gold: document.getElementById('set_gold').value || 0,
-            rank: document.getElementById('set_rank').value,
-            level: document.getElementById('set_level').value || 1,
-            last_update: Date.now()
-        };
-
-        try {
-            await fetch(`${fbURL}players/${uid}.json`, {
-                method: 'PATCH',
-                body: JSON.stringify(data)
-            });
-            alert("✅ ส่งข้อมูลเข้าเซิร์ฟเวอร์ OlympusX สำเร็จ!");
-        } catch (e) {
-            alert("❌ ผิดพลาด: เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
-        }
+    async function genKey(hrs) {
+        const key = "OPX-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        const data = { key: key, expire: Date.now() + (hrs * 60 * 60 * 1000), status: "active" };
+        await fetch(`${fbURL}keys/${key}.json`, { method: 'PUT', body: JSON.stringify(data) });
+        document.getElementById('key-res').innerText = key;
+        addLog(`สร้างคีย์ ${hrs} ชม.: ${key}`);
     }
-</script>
 
+    async function injectData() {
+        const uid = document.getElementById('target_uid').value;
+        const data = { 
+            diamonds: document.getElementById('set_diam').value || 0,
+            rank: document.getElementById('set_rank').value,
+            vip: 8,
+            last_mod: Date.now()
+        };
+        await fetch(`${fbURL}players/${uid}.json`, { method: 'PATCH', body: JSON.stringify(data) });
+        addLog(`Inject ข้อมูล UID ${uid} สำเร็จ!`);
+    }
+
+    function addLog(m) { const l = document.getElementById('logs'); l.innerHTML += `<br>[${new Date().toLocaleTimeString()}]: ${m}`; l.scrollTop = l.scrollHeight; }
+</script>
 </body>
 </html>
