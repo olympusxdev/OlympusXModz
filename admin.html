@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>OLYMPUSX | ADMIN DASHBOARD</title>
+    <style>
+        body { background: #050505; color: #00ff00; font-family: sans-serif; padding: 20px; }
+        .panel { border: 1px solid #00ff00; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; background: #111; }
+        input, select { width: 90%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid #00ff00; color: #00ff00; }
+        .btn-save { width: 100%; padding: 15px; background: #00ff00; color: #000; font-weight: bold; border: none; cursor: pointer; }
+        .group { margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="panel">
+    <h2>♕ OLYMPUSX ADMIN PANEL</h2>
+    <p>จัดการข้อมูลผู้เล่นแบบ Real-time</p>
+    
+    <div class="group">
+        <label>ระบุ UID ผู้เล่นที่ต้องการปรับ:</label>
+        <input type="text" id="target_uid" placeholder="เช่น 15625460340">
+    </div>
+
+    <div class="group">
+        <h3>💎 ปรับแก้สถานะเงิน/เพชร</h3>
+        <input type="number" id="set_diam" placeholder="จำนวนเพชร (เช่น 999999)">
+        <input type="number" id="set_gold" placeholder="จำนวนทอง">
+    </div>
+
+    <div class="group">
+        <h3>🏆 ปรับแรงค์ & เลเวล</h3>
+        <select id="set_rank">
+            <option value="GRANDMASTER">GRANDMASTER</option>
+            <option value="HEROIC">HEROIC</option>
+            <option value="DIAMOND">DIAMOND</option>
+        </select>
+        <input type="number" id="set_level" placeholder="เลเวล (1-100)">
+    </div>
+
+    <button class="btn-save" onclick="updatePlayer()">⚡ อัปเดตข้อมูลเเดี๋ยวนี้</button>
+</div>
+
+<script>
+    const fbURL = "https://olympusx-xmodz-default-rtdb.asia-southeast1.firebasedatabase.app/";
+
+    async function updatePlayer() {
+        const uid = document.getElementById('target_uid').value;
+        if(!uid) return alert("ใส่ UID ก่อน!");
+
+        const data = {
+            diamonds: document.getElementById('set_diam').value || 0,
+            gold: document.getElementById('set_gold').value || 0,
+            rank: document.getElementById('set_rank').value,
+            level: document.getElementById('set_level').value || 1,
+            last_update: Date.now()
+        };
+
+        try {
+            await fetch(`${fbURL}players/${uid}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify(data)
+            });
+            alert("✅ ส่งข้อมูลเข้าเซิร์ฟเวอร์ OlympusX สำเร็จ!");
+        } catch (e) {
+            alert("❌ ผิดพลาด: เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
+        }
+    }
+</script>
+
+</body>
+</html>
