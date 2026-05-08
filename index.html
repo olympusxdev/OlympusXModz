@@ -3,20 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLYMPUSX XModz</title>
+    <title>OLYMPUSX | Proxy Server</title>
     <style>
-        body { background: #000; color: #ff0000; font-family: sans-serif; text-align: center; padding-top: 50px; }
-        .box { border: 2px solid #ff0000; padding: 30px; display: inline-block; border-radius: 20px; box-shadow: 0 0 20px #ff0000; }
-        .btn { display: block; width: 250px; padding: 15px; margin: 20px auto; background: #ff0000; color: #fff; text-decoration: none; font-weight: bold; border-radius: 10px; transition: 0.3s; }
-        .btn:hover { background: #fff; color: #ff0000; transform: scale(1.1); }
+        :root { --main-red: #ff0000; --vip-gold: #ffd700; --bg-dark: #020202; }
+        body { 
+            background: var(--bg-dark); color: #fff; font-family: 'Segoe UI', sans-serif;
+            margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh;
+            overflow: hidden; background-image: radial-gradient(circle at center, #110000 0%, #000 70%);
+        }
+        .main-card {
+            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 0, 0, 0.3); padding: 40px; border-radius: 20px;
+            text-align: center; width: 90%; max-width: 500px; box-shadow: 0 0 40px rgba(255, 0, 0, 0.2);
+        }
+        .logo { font-size: 3em; font-weight: 900; letter-spacing: 10px; color: var(--main-red); text-shadow: 0 0 20px var(--main-red); margin-bottom: 5px; }
+        .version { font-size: 0.8em; color: #555; margin-bottom: 30px; letter-spacing: 3px; }
+        
+        .btn-grid { display: grid; gap: 20px; }
+        .btn { 
+            padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; 
+            transition: 0.4s; text-transform: uppercase; letter-spacing: 2px; position: relative; overflow: hidden;
+        }
+        /* ปุ่มสายฟรี */
+        .btn-free { border: 1px solid #444; color: #aaa; background: rgba(255, 255, 255, 0.05); }
+        .btn-free:hover { border-color: #fff; color: #fff; background: rgba(255, 255, 255, 0.1); }
+        
+        /* ปุ่ม VIP */
+        .btn-vip { 
+            background: linear-gradient(45deg, #660000, #ff0000); color: #fff;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); border: none;
+        }
+        .btn-vip:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(255, 0, 0, 0.6); }
+        .vip-tag { position: absolute; top: 0; right: 0; background: var(--vip-gold); color: #000; font-size: 0.6em; padding: 2px 8px; border-radius: 0 0 0 8px; }
+
+        .footer-text { margin-top: 30px; font-size: 0.7em; color: #333; }
+        /* สแกนเส้นไฟวิ่ง */
+        .scanline { width: 100%; height: 2px; background: rgba(255, 0, 0, 0.2); position: absolute; top: 0; animation: scan 3s linear infinite; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>OlympusX</h1>
-        <p>ยินดีต้อนรับสู่ระบบควบคุม Private Server</p>
-        <a href="verify.html" class="btn">🛡️ ยืนยันตัวตน (Verify)</a>
-        <a href="dashboard.html" class="btn">💻 แดชบอร์ด (Dashboard)</a>
+    <div class="scanline"></div>
+    <div class="main-card">
+        <div class="logo">OLYMPUSX</div>
+        <div class="version">Proxy Server OlympusX V2.0</div>
+        
+        <div class="btn-grid">
+            <a href="verify.html" class="btn btn-free">
+                Standard Access
+                <div style="font-size: 0.6em; opacity: 0.6; margin-top: 5px;">ปลดล็อก 10 ฟีเจอร์พื้นฐาน</div>
+            </a>
+            
+            <a href="vip.html" class="btn btn-vip">
+                <div class="vip-tag">TOP TIER</div>
+                Elite VIP Access
+                <div style="font-size: 0.6em; opacity: 0.9; margin-top: 5px;">31 ฟีเจอร์ลับ + GHOST ADMIN</div>
+            </a>
+        </div>
+
+        <div class="footer-text">OlympusX Dev</div>
     </div>
 </body>
 </html>
