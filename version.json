@@ -1,8 +1,0 @@
-{
-  "level_bypass": 100,
-  "reset_guest": true,
-  "unlock_freestyle": true,
-  "active_mod_skins": [
-    {"original_id": "101001", "mod_url": "https://raw.githubusercontent.com/olympusxdev/OlympusX/main/head_white.bytes"}
-  ]
-}
