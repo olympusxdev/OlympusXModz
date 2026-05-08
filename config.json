@@ -1,0 +1,57 @@
+{
+  "olympusx_system": {
+    "server_status": "ONLINE",
+    "mod_version": "2.0",
+    "developer": "OlympusX SHOP",
+    "firebase_path": "https://olympusx-xmodz-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  },
+  "player_privileges": {
+    "auth_required": true,
+    "session_expiry_sec": 10800,
+    "bypass_ban_system": true,
+    "is_super_admin": true
+  },
+  "data_injection": {
+    "currency": {
+      "unlimited_diamonds": true,
+      "unlimited_gold": true,
+      "realtime_sync": true,
+      "bypass_store_cost": true
+    },
+    "account_stats": {
+      "level_max": 100,
+      "rank_tier": "GRANDMASTER",
+      "rank_point_custom": 99999,
+      "prime_vip_level": 8,
+      "badge_count_custom": 5000,
+      "top_auction_rank": 1
+    },
+    "identity_spoof": {
+      "custom_name_active": true,
+      "custom_uid_active": true,
+      "clone_target_uid": "0",
+      "spoof_region": "THAILAND"
+    }
+  },
+  "asset_unlocker": {
+    "all_skins_visible": true,
+    "all_emotes_lobby": true,
+    "transformation_skin_sync": true,
+    "flag_emote_bypass": true,
+    "weapon_skin_full": true,
+    "private_lobby_realtime": true
+  },
+  "admin_tools": {
+    "mail_injector": {
+      "active": true,
+      "sender_name": "OLYMPUSX_ADMIN",
+      "mail_title": "ITEMS DELIVERY",
+      "auto_attach_all": true
+    },
+    "gameplay_tweak": {
+      "damage_control": true,
+      "anti_lag_optimized": true,
+      "private_lobby_id": "999"
+    }
+  }
+}
