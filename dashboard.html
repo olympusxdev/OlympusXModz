@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLYMPUSX Dashboard | VERSION 2.0</title>
+    <style>
+        :root { --main-red: #ff0000; --gold: #ffd700; --neon-green: #39ff14; --dark-bg: #050505; }
+        body { background: var(--dark-bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+        .glitch-header { background: #111; padding: 20px; text-align: center; border-bottom: 2px solid var(--main-red); box-shadow: 0 0 15px var(--main-red); }
+        .glitch-text { color: var(--main-red); font-size: 2.5em; font-weight: bold; text-transform: uppercase; letter-spacing: 5px; text-shadow: 2px 2px #550000; }
+        
+        .nav-tabs { display: flex; background: #1a1a1a; cursor: pointer; }
+        .tab { flex: 1; padding: 15px; text-align: center; border-bottom: 3px solid transparent; transition: 0.3s; font-weight: bold; color: #888; }
+        .tab.active { border-bottom: 3px solid var(--main-red); color: var(--main-red); background: #222; }
+
+        .content-container { padding: 20px; max-width: 900px; margin: auto; }
+        .card { background: #111; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        h3 { color: var(--gold); border-left: 4px solid var(--main-red); padding-left: 10px; margin-top: 0; }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.9em; color: #aaa; }
+        input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: var(--neon-green); border-radius: 5px; box-sizing: border-box; }
+        input:focus { border-color: var(--main-red); outline: none; }
+
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .btn-update { background: var(--main-red); color: white; box-shadow: 0 4px 0 #800000; }
+        .btn-update:active { transform: translateY(4px); box-shadow: none; }
+        .btn-refresh { background: #333; color: white; margin-top: 10px; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 20px; font-size: 0.8em; font-weight: bold; }
+        .online { background: rgba(57, 255, 20, 0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
+
+        .log-box { background: #000; height: 150px; overflow-y: scroll; padding: 10px; font-size: 0.8em; color: #00ff00; border: 1px solid #222; }
+    </style>
+</head>
+<body>
+
+<div class="glitch-header">
+    <div class="glitch-text">OLYMPUSX♕.EXE</div>
+    <div style="font-size: 0.8em; color: #888;">PRIVATE SERVER INFRASTRUCTURE v2.0</div>
+</div>
+
+<div class="nav-tabs">
+    <div class="tab active" onclick="showSection('user')">👤 ผู้เล่น</div>
+    <div class="tab" onclick="showSection('admin')">💀 แอดมิน</div>
+    <div class="tab" onclick="showSection('server')">🌐 เซิร์ฟเวอร์</div>
+</div>
+
+<div class="content-container">
+    
+    <div id="sec-user" class="section card" style="display: block;">
+        <h3>[ ข้อมูลส่วนตัวผู้เล่น ]</h3>
+        <div class="input-group">
+            <input type="text" id="p_uid" placeholder="ระบุ UID เพื่อซิงค์ข้อมูล...">
+            <button class="btn btn-refresh" onclick="fetchUser()">🔍 ดึงข้อมูลจากฐานข้อมูล</button>
+        </div>
+        
+        <div id="player_data" style="display:none;">
+            <div class="player-info stats-grid">
+                <div class="card" style="margin:0; padding:10px; background:#1a1a1a;">
+                    <label>ระดับพรีเมียม</label>
+                    <div id="disp_vip" style="color:var(--gold); font-size: 1.2em; font-weight: bold;">-</div>
+                </div>
+                <div class="card" style="margin:0; padding:10px; background:#1a1a1a;">
+                    <label>สถานะใบอนุญาต</label>
+                    <div class="status-badge online" id="disp_status">ACTIVE</div>
+                </div>
+            </div>
+            <div class="card" style="margin:10px 0 0 0; background:#1a1a1a;">
+                <p>💎 เพชรในเครื่อง: <span id="disp_diam" style="color:cyan">0</span></p>
+                <p>💰 เงินในเครื่อง: <span id="disp_gold" style="color:var(--gold)">0</span></p>
+                <p>🆙 เลเวลปัจจุบัน: <span id="disp_lv" style="color:var(--neon-green)">0</span></p>
+                <p>⭐ แรงค์ปัจจุบัน: <span id="disp_rank">UNRANK</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="sec-admin" class="section card" style="display: none;">
+        <h3>[ แผงควบคุมมาสเตอร์ ]</h3>
+        <div class="input-group">
+            <label>รหัสผ่านเข้าถึงชั้นความลับ</label>
+            <input type="password" id="admin_key" placeholder="••••••••">
+        </div>
+
+        <div class="card" style="background:#1a1a1a;">
+            <label>เป้าหมาย (Target UID)</label>
+            <input type="text" id="a_uid" placeholder="เช่น 15625460340">
+            
+            <div class="stats-grid" style="margin-top:10px;">
+                <div class="input-group">
+                    <label>จำนวนเพชร</label>
+                    <input type="number" id="a_diam" value="999999">
+                </div>
+                <div class="input-group">
+                    <label>จำนวนทอง</label>
+                    <input type="number" id="a_gold" value="9999999">
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="input-group">
+                    <label>ปรับระดับ VIP (1-8)</label>
+                    <input type="number" id="a_vip" min="1" max="8" value="8">
+                </div>
+                <div class="input-group">
+                    <label>ปรับเลเวล (1-100)</label>
+                    <input type="number" id="a_lv" value="100">
+                </div>
+            </div>
+
+            <label>เลือกแรงค์ที่ต้องการแสดงผล</label>
+            <select id="a_rank">
+                <option value="GRANDMASTER">🏆 GRANDMASTER (ท็อปเซิร์ฟ)</option>
+                <option value="HEROIC">🎖️ HEROIC</option>
+                <option value="MASTER">💎 MASTER</option>
+                <option value="DIAMOND">🔷 DIAMOND</option>
+            </select>
+
+            <label>โคลนไอดีเป้าหมาย (ใส่ UID ต้นฉบับ)</label>
+            <input type="text" id="a_clone" placeholder="ก๊อปปี้ชุดและท่าทางจาก UID นี้">
+
+            <button class="btn btn-update" onclick="executeAdminAction()">⚡ บันทึกและส่งข้อมูลเรียลไทม์</button>
+        </div>
+    </div>
+
+    <div id="sec-server" class="section card" style="display: none;">
+        <h3>[ สถานะเซิร์ฟเวอร์ OlympusX ]</h3>
+        <div class="stats-grid">
+            <div class="card" style="background:#000; text-align:center;">
+                <label>DATABASE</label>
+                <div style="color:var(--neon-green)">CONNECTED</div>
+            </div>
+            <div class="card" style="background:#000; text-align:center;">
+                <label>SYSTEM LOAD</label>
+                <div style="color:var(--neon-green)">0.02ms</div>
+            </div>
+        </div>
+        
+        <label>ประกาศข่าวสารในเกม (Global News)</label>
+        <textarea id="server_news" rows="3" placeholder="ข้อความที่จะไปเด้งในจดหมายผู้เล่น..."></textarea>
+        <button class="btn btn-refresh" style="background:var(--gold); color:#000;" onclick="updateNews()">📢 ประกาศข่าว</button>
+
+        <label style="margin-top:15px;">ประวัติการทำรายการ (System Logs)</label>
+        <div class="log-box" id="log_display">
+            [SYSTEM]: OlympusX Server Initialized...<br>
+            [SYSTEM]: Database Synced via Firebase...<br>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const fbURL = "https://olympusx-xmodz-default-rtdb.asia-southeast1.firebasedatabase.app/";
+
+    function showSection(name) {
+        document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('sec-' + name).style.display = 'block';
+        event.currentTarget.classList.add('active');
+    }
+
+    function addLog(msg) {
+        const log = document.getElementById('log_display');
+        log.innerHTML += `[${new Date().toLocaleTimeString()}]: ${msg}<br>`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    async function fetchUser() {
+        const uid = document.getElementById('p_uid').value;
+        if(!uid) return alert("กรุณาระบุ UID");
+        
+        try {
+            const res = await fetch(`${fbURL}players/${uid}.json`);
+            const data = await res.json();
+            if(data) {
+                document.getElementById('player_data').style.display = 'block';
+                document.getElementById('disp_diam').innerText = data.diamonds || 0;
+                document.getElementById('disp_gold').innerText = data.gold || 0;
+                document.getElementById('disp_lv').innerText = data.level || 0;
+                document.getElementById('disp_rank').innerText = data.rank || 'UNRANK';
+                document.getElementById('disp_vip').innerText = 'PRIME VIP ' + (data.vip || 0);
+                addLog(`ดึงข้อมูล UID: ${uid} สำเร็จ`);
+            } else {
+                alert("ไม่พบข้อมูลในเซิร์ฟเวอร์");
+            }
+        } catch(e) { addLog("Error: ดึงข้อมูลล้มเหลว"); }
+    }
+
+    async function executeAdminAction() {
+        const key = document.getElementById('admin_key').value;
+        if(key !== "OLYMPUSX77") return alert("รหัสผ่านไม่ถูกต้อง!");
+
+        const uid = document.getElementById('a_uid').value;
+        if(!uid) return alert("ระบุ UID เป้าหมาย");
+
+        const data = {
+            diamonds: document.getElementById('a_diam').value,
+            gold: document.getElementById('a_gold').value,
+            vip: document.getElementById('a_vip').value,
+            level: document.getElementById('a_lv').value,
+            rank: document.getElementById('a_rank').value,
+            clone_target: document.getElementById('a_clone').value || "0",
+            last_mod: Date.now(),
+            expire: Date.now() + (3 * 60 * 60 * 1000)
+        };
+
+        try {
+            await fetch(`${fbURL}players/${uid}.json`, { method: 'PATCH', body: JSON.stringify(data) });
+            addLog(`อัปเดตสถานะ UID: ${uid} -> เรียบร้อย`);
+            alert("⚡ อัปเดตข้อมูลเข้า Core Server แล้ว!");
+        } catch(e) { alert("ส่งข้อมูลล้มเหลว!"); }
+    }
+
+    async function updateNews() {
+        const news = document.getElementById('server_news').value;
+        await fetch(`${fbURL}server/news.json`, { method: 'PUT', body: JSON.stringify({ msg: news, time: Date.now() }) });
+        addLog("ประกาศข่าวอาสารถึงผู้เล่นทุกคนแล้ว");
+        alert("📢 ประกาศข่าวเรียบร้อย");
+    }
+</script>
+
+</body>
+</html>
